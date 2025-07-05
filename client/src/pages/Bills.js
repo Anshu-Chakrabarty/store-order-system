@@ -4,13 +4,13 @@ const Bills = () => {
   const [summary, setSummary] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/summary")
+    fetch("https://store-backend-i0xf.onrender.com/api/summary")
       .then(res => res.json())
       .then(data => setSummary(data.storeStats || []));
   }, []);
 
   const handleDownload = (store, index) => {
-    const url = `http://localhost:4000/api/bill/${store}/${index + 1}`;
+    const url = `https://store-backend-i0xf.onrender.com/api/bill/${store}/${index + 1}`;
     window.open(url, "_blank");
   };
 

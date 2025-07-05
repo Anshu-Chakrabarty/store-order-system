@@ -7,7 +7,7 @@ const Products = () => {
   const [editingIndex, setEditingIndex] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/stores")
+    fetch("https://store-backend-i0xf.onrender.com/api/stores")
       .then(res => res.json())
       .then(data => setStores(data));
 
@@ -15,7 +15,7 @@ const Products = () => {
   }, []);
 
   const fetchProducts = () => {
-    fetch("http://localhost:4000/api/products")
+    fetch("https://store-backend-i0xf.onrender.com/api/products")
       .then(res => res.json())
       .then(data => setProducts(data));
   };
@@ -30,7 +30,7 @@ const Products = () => {
 
     if (editingIndex !== null) {
       // EDIT mode
-      await fetch(`http://localhost:4000/api/products/${editingIndex}`, {
+      await fetch(`https://store-backend-i0xf.onrender.com/api/products/${editingIndex}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -38,7 +38,7 @@ const Products = () => {
       alert("Product updated!");
     } else {
       // ADD mode
-      await fetch("http://localhost:4000/api/products", {
+      await fetch("https://store-backend-i0xf.onrender.com/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -63,7 +63,7 @@ const Products = () => {
 
   const handleDelete = async (index) => {
     if (!window.confirm("Delete this product?")) return;
-    await fetch(`http://localhost:4000/api/products/${index}`, {
+    await fetch(`https://store-backend-i0xf.onrender.com/api/products/${index}`, {
       method: "DELETE"
     });
     fetchProducts();

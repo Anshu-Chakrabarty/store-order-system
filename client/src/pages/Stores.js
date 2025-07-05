@@ -11,7 +11,7 @@ const Stores = () => {
   }, []);
 
   const fetchStores = async () => {
-    const res = await fetch("http://localhost:4000/api/stores");
+    const res = await fetch("https://store-backend-i0xf.onrender.com/api/stores");
     const data = await res.json();
     setStores(data);
   };
@@ -23,14 +23,14 @@ const Stores = () => {
     }
 
     if (editingIndex !== null) {
-      await fetch(`http://localhost:4000/api/stores/${editingIndex}`, {
+      await fetch(`https://store-backend-i0xf.onrender.com/api/stores/${editingIndex}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       showToast("✅ Store updated!");
     } else {
-      await fetch("http://localhost:4000/api/stores", {
+      await fetch("https://store-backend-i0xf.onrender.com/api/stores", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -51,7 +51,7 @@ const Stores = () => {
 
   const handleDelete = async (index) => {
     if (!window.confirm("Delete this store?")) return;
-    await fetch(`http://localhost:4000/api/stores/${index}`, {
+    await fetch(`https://store-backend-i0xf.onrender.com/api/stores/${index}`, {
       method: "DELETE",
     });
     showToast("🗑️ Store deleted.");
@@ -64,7 +64,7 @@ const Stores = () => {
   };
 
   const downloadStoresExcel = () => {
-    window.open("http://localhost:4000/api/stores/export", "_blank");
+    window.open("https://store-backend-i0xf.onrender.com/api/stores/export", "_blank");
   };
 
   const showToast = (msg) => {

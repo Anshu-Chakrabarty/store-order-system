@@ -10,7 +10,7 @@ const Dashboard = () => {
   }, []);
 
   const fetchSummary = () => {
-    fetch("http://localhost:4000/api/summary")
+    fetch("https://store-backend-i0xf.onrender.com/api/summary")
       .then(res => res.json())
       .then(data => setSummary(data));
   };
