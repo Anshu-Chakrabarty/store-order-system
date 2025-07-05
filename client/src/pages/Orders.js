@@ -11,14 +11,14 @@ const Orders = () => {
   const [status, setStatus] = useState("Pending");
 
   useEffect(() => {
-    fetch("https://store-backend-i0xf.onrender.com/api/stores")
+    fetch("${process.env.REACT_APP_API_BASE}/api/stores")
       .then(res => res.json())
       .then(data => setStores(data));
   }, []);
 
   useEffect(() => {
     if (selectedStore) {
-      fetch("https://store-backend-i0xf.onrender.com/api/products")
+      fetch("${process.env.REACT_APP_API_BASE}/api/products")
         .then(res => res.json())
         .then(data => {
           const filtered = data.filter(p => p.storeName === selectedStore);
@@ -65,7 +65,7 @@ const Orders = () => {
       date: new Date().toLocaleString()
     };
 
-    await fetch("https://store-backend-i0xf.onrender.com/api/orders", {
+    await fetch("${process.env.REACT_APP_API_BASE}/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ storeName: selectedStore, orderData })

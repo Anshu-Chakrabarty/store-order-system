@@ -12,14 +12,14 @@ const Home = () => {
   }, []);
 
   const fetchSummary = async () => {
-    const res = await fetch("https://store-backend-i0xf.onrender.com/api/summary");
+    const res = await fetch("${process.env.REACT_APP_API_BASE}/api/summary");
     const data = await res.json();
     setSummary(data);
 
     // Fetch recent orders (merge all store orders)
     const allOrders = [];
     for (const store of data.storeStats) {
-      const res = await fetch(`https://store-backend-i0xf.onrender.com/api/orders/${store.store}`);
+      const res = await fetch(`${process.env.REACT_APP_API_BASE}/api/orders/${store.store}`);
       const orders = await res.json();
       orders.forEach((order, idx) => {
         allOrders.push({ ...order, store: store.store, index: idx });
@@ -31,7 +31,7 @@ const Home = () => {
     // Fetch payments
     let total = 0;
     for (const store of data.storeStats) {
-      const res = await fetch(`https://store-backend-i0xf.onrender.com/api/payments/${store.store}`);
+      const res = await fetch(`${process.env.REACT_APP_API_BASE}/api/payments/${store.store}`);
       const payments = await res.json();
       payments.forEach(p => total += parseFloat(p.amount || 0));
     }

@@ -11,7 +11,7 @@ const Payments = () => {
   });
 
   useEffect(() => {
-    fetch("https://store-backend-i0xf.onrender.com/api/stores")
+    fetch("${process.env.REACT_APP_API_BASE}/api/stores")
       .then(res => res.json())
       .then(data => setStores(data));
   }, []);
@@ -22,7 +22,7 @@ const Payments = () => {
       date: new Date().toLocaleString()
     };
 
-    await fetch("https://store-backend-i0xf.onrender.com/api/payments", {
+    await fetch("${process.env.REACT_APP_API_BASE}/api/payments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -36,7 +36,7 @@ const Payments = () => {
       alert("Please select a store to download payments.");
       return;
     }
-    window.open(`https://store-backend-i0xf.onrender.com/api/export/payments/${form.storeName}`, "_blank");
+    window.open(`${process.env.REACT_APP_API_BASE}/api/export/payments/${form.storeName}`, "_blank");
   };
 
   return (

@@ -10,7 +10,7 @@ const Dashboard = () => {
   }, []);
 
   const fetchSummary = () => {
-    fetch("https://store-backend-i0xf.onrender.com/api/summary")
+    fetch("${process.env.REACT_APP_API_BASE}/api/summary")
       .then(res => res.json())
       .then(data => setSummary(data));
   };
