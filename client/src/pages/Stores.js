@@ -1,3 +1,4 @@
+// ✅ Final Responsive + Functional Stores.js with Toast, Table & Download
 import React, { useState, useEffect } from "react";
 
 const Stores = () => {
@@ -11,7 +12,7 @@ const Stores = () => {
   }, []);
 
   const fetchStores = async () => {
-    const res = await fetch("${process.env.REACT_APP_API_BASE}/api/stores");
+    const res = await fetch(`${process.env.REACT_APP_API_BASE}/api/stores`);
     const data = await res.json();
     setStores(data);
   };
@@ -22,22 +23,17 @@ const Stores = () => {
       return;
     }
 
-    if (editingIndex !== null) {
-      await fetch(`${process.env.REACT_APP_API_BASE}/api/stores/${editingIndex}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      showToast("✅ Store updated!");
-    } else {
-      await fetch("${process.env.REACT_APP_API_BASE}/api/stores", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      showToast("✅ Store added!");
-    }
+    const url = `${process.env.REACT_APP_API_BASE}/api/stores`;
+    const method = editingIndex !== null ? "PUT" : "POST";
+    const endpoint = editingIndex !== null ? `${url}/${editingIndex}` : url;
 
+    await fetch(endpoint, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    showToast(editingIndex !== null ? "✅ Store updated!" : "✅ Store added!");
     setForm({ name: "", type: "Franchise" });
     setEditingIndex(null);
     fetchStores();
@@ -64,7 +60,7 @@ const Stores = () => {
   };
 
   const downloadStoresExcel = () => {
-    window.open("${process.env.REACT_APP_API_BASE}/api/stores/export", "_blank");
+    window.open(`${process.env.REACT_APP_API_BASE}/api/stores/export`, "_blank");
   };
 
   const showToast = (msg) => {
@@ -82,7 +78,7 @@ const Stores = () => {
         </div>
       )}
 
-      <div className="card" style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginBottom: "1rem" }}>
+      <div className="card" style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center", marginBottom: "1rem" }}>
         <input
           placeholder="Store Name"
           value={form.name}
@@ -99,9 +95,7 @@ const Stores = () => {
           {editingIndex !== null ? "Update" : "Add"}
         </button>
         {editingIndex !== null && (
-          <button onClick={handleCancel}>
-            Cancel
-          </button>
+          <button onClick={handleCancel} className="secondary">Cancel</button>
         )}
         <button onClick={downloadStoresExcel} style={{ marginLeft: "auto" }}>
           📥 Download Excel
@@ -109,34 +103,36 @@ const Stores = () => {
       </div>
 
       <h3>All Stores</h3>
-      <table border="1" cellPadding="8" style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}>
-        <thead>
-          <tr style={{ backgroundColor: "#f0f0f0" }}>
-            <th>#</th>
-            <th>Store Name</th>
-            <th>Type</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {stores.map((store, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>{store.name}</td>
-              <td>{store.type}</td>
-              <td>
-                <button onClick={() => handleEdit(index)}>✏️</button>
-                <button onClick={() => handleDelete(index)} style={{ marginLeft: "0.5rem" }}>❌</button>
-              </td>
+      <div style={{ overflowX: "auto" }}>
+        <table border="1" cellPadding="8" style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}>
+          <thead>
+            <tr style={{ backgroundColor: "#f0f0f0" }}>
+              <th>#</th>
+              <th>Store Name</th>
+              <th>Type</th>
+              <th>Actions</th>
             </tr>
-          ))}
-          {stores.length === 0 && (
-            <tr>
-              <td colSpan="4" style={{ textAlign: "center" }}>No stores added yet.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {stores.map((store, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td>{store.name}</td>
+                <td>{store.type}</td>
+                <td>
+                  <button onClick={() => handleEdit(index)}>✏️</button>
+                  <button onClick={() => handleDelete(index)} style={{ marginLeft: "0.5rem" }}>❌</button>
+                </td>
+              </tr>
+            ))}
+            {stores.length === 0 && (
+              <tr>
+                <td colSpan="4" style={{ textAlign: "center" }}>No stores added yet.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

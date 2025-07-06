@@ -11,20 +11,35 @@ import Bills from "./pages/Bills";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="stores" element={<Stores />} />
-          <Route path="products" element={<Products />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="payments" element={<Payments />} />
-          <Route path="bills" element={<Bills />} />
-        </Route>
-      </Routes>
-    </Router>
+    <div style={{ minHeight: "100vh", backgroundColor: "#f9f9f9" }}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<PageWrapper><Home /></PageWrapper>} />
+            <Route path="dashboard" element={<PageWrapper><Dashboard /></PageWrapper>} />
+            <Route path="stores" element={<PageWrapper><Stores /></PageWrapper>} />
+            <Route path="products" element={<PageWrapper><Products /></PageWrapper>} />
+            <Route path="orders" element={<PageWrapper><Orders /></PageWrapper>} />
+            <Route path="payments" element={<PageWrapper><Payments /></PageWrapper>} />
+            <Route path="bills" element={<PageWrapper><Bills /></PageWrapper>} />
+          </Route>
+        </Routes>
+      </Router>
+    </div>
   );
 }
+
+// ✅ Universal Responsive Page Wrapper
+const PageWrapper = ({ children }) => (
+  <div style={{
+    maxWidth: "1200px",
+    margin: "0 auto",
+    padding: "1rem",
+    boxSizing: "border-box",
+    width: "100%"
+  }}>
+    {children}
+  </div>
+);
 
 export default App;

@@ -9,40 +9,59 @@ const Payments = () => {
     mode: "Cash",
     type: "Full"
   });
+  const [toast, setToast] = useState("");
 
   useEffect(() => {
-    fetch("${process.env.REACT_APP_API_BASE}/api/stores")
+    fetch(`${process.env.REACT_APP_API_BASE}/api/stores`)
       .then(res => res.json())
       .then(data => setStores(data));
   }, []);
 
   const handleSubmit = async () => {
+    if (!form.storeName || !form.customer || !form.amount) {
+      showToast("❗ Please fill all required fields.");
+      return;
+    }
+
     const payload = {
       ...form,
       date: new Date().toLocaleString()
     };
 
-    await fetch("${process.env.REACT_APP_API_BASE}/api/payments", {
+    await fetch(`${process.env.REACT_APP_API_BASE}/api/payments`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
-    alert("Payment recorded");
+    showToast("✅ Payment recorded.");
+    setForm({ storeName: "", customer: "", amount: "", mode: "Cash", type: "Full" });
   };
 
   const handleDownloadPayments = () => {
     if (!form.storeName) {
-      alert("Please select a store to download payments.");
+      showToast("❗ Please select a store to download payments.");
       return;
     }
     window.open(`${process.env.REACT_APP_API_BASE}/api/export/payments/${form.storeName}`, "_blank");
   };
 
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 3000);
+  };
+
   return (
     <div className="container">
       <h2>Record Payment</h2>
-      <div className="card">
+
+      {toast && (
+        <div style={{ backgroundColor: "#e0ffe0", padding: "8px", marginBottom: "1rem", borderRadius: "4px" }}>
+          {toast}
+        </div>
+      )}
+
+      <div className="card" style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
         <select
           value={form.storeName}
           onChange={(e) => setForm({ ...form, storeName: e.target.value })}
@@ -52,16 +71,20 @@ const Payments = () => {
             <option key={i} value={s.name}>{s.name}</option>
           ))}
         </select>
+
         <input
           placeholder="Customer"
           value={form.customer}
           onChange={(e) => setForm({ ...form, customer: e.target.value })}
         />
+
         <input
           placeholder="Amount"
+          type="number"
           value={form.amount}
           onChange={(e) => setForm({ ...form, amount: e.target.value })}
         />
+
         <select
           value={form.mode}
           onChange={(e) => setForm({ ...form, mode: e.target.value })}
@@ -70,6 +93,7 @@ const Payments = () => {
           <option>UPI</option>
           <option>Card</option>
         </select>
+
         <select
           value={form.type}
           onChange={(e) => setForm({ ...form, type: e.target.value })}
@@ -77,8 +101,11 @@ const Payments = () => {
           <option>Full</option>
           <option>Partial</option>
         </select>
+
         <button onClick={handleSubmit}>Submit</button>
-        <button className="secondary" onClick={handleDownloadPayments}>📥 Download Payments Excel</button>
+        <button className="secondary" onClick={handleDownloadPayments}>
+          📥 Download Payments Excel
+        </button>
       </div>
     </div>
   );

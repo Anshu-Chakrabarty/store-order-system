@@ -1,3 +1,4 @@
+// ✅ Final Responsive + Functional Products.js with Edit/Delete + Environment Config
 import React, { useEffect, useState } from "react";
 
 const Products = () => {
@@ -5,9 +6,10 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [form, setForm] = useState({ storeName: "", name: "", price: "", quantity: "" });
   const [editingIndex, setEditingIndex] = useState(null);
+  const [toast, setToast] = useState("");
 
   useEffect(() => {
-    fetch("${process.env.REACT_APP_API_BASE}/api/stores")
+    fetch(`${process.env.REACT_APP_API_BASE}/api/stores`)
       .then(res => res.json())
       .then(data => setStores(data));
 
@@ -15,35 +17,34 @@ const Products = () => {
   }, []);
 
   const fetchProducts = () => {
-    fetch("${process.env.REACT_APP_API_BASE}/api/products")
+    fetch(`${process.env.REACT_APP_API_BASE}/api/products`)
       .then(res => res.json())
       .then(data => setProducts(data));
   };
 
   const handleSubmit = async () => {
     if (!form.storeName || !form.name || !form.price) {
-      alert("Please fill all fields");
+      showToast("❗ Please fill all required fields.");
       return;
     }
 
     const payload = { ...form };
+    const url = `${process.env.REACT_APP_API_BASE}/api/products`;
 
     if (editingIndex !== null) {
-      // EDIT mode
-      await fetch(`${process.env.REACT_APP_API_BASE}/api/products/${editingIndex}`, {
+      await fetch(`${url}/${editingIndex}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-      alert("Product updated!");
+      showToast("✅ Product updated!");
     } else {
-      // ADD mode
-      await fetch("${process.env.REACT_APP_API_BASE}/api/products", {
+      await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-      alert("Product added!");
+      showToast("✅ Product added!");
     }
 
     setForm({ storeName: "", name: "", price: "", quantity: "" });
@@ -51,14 +52,14 @@ const Products = () => {
     fetchProducts();
   };
 
-  const handleEdit = (product, indexInFullArray) => {
+  const handleEdit = (product, index) => {
     setForm({
       storeName: product.storeName,
       name: product.name,
       price: product.price,
       quantity: product.quantity || ""
     });
-    setEditingIndex(indexInFullArray);
+    setEditingIndex(index);
   };
 
   const handleDelete = async (index) => {
@@ -66,13 +67,26 @@ const Products = () => {
     await fetch(`${process.env.REACT_APP_API_BASE}/api/products/${index}`, {
       method: "DELETE"
     });
+    showToast("🗑️ Product deleted.");
     fetchProducts();
+  };
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 3000);
   };
 
   return (
     <div className="container">
       <h2>{editingIndex !== null ? "Edit Product" : "Add Product"}</h2>
-      <div className="card">
+
+      {toast && (
+        <div style={{ backgroundColor: "#e0ffe0", padding: "8px", marginBottom: "1rem", borderRadius: "4px" }}>
+          {toast}
+        </div>
+      )}
+
+      <div className="card" style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center", marginBottom: "1rem" }}>
         <select
           value={form.storeName}
           onChange={e => setForm({ ...form, storeName: e.target.value })}
