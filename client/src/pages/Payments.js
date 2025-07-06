@@ -12,7 +12,7 @@ const Payments = () => {
   const [toast, setToast] = useState("");
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_BASE}/api/stores`)
+    fetch(`${process.env.REACT_APP_API_BASE}/api/stores`) 
       .then(res => res.json())
       .then(data => setStores(data));
   }, []);
