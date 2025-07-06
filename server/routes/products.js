@@ -4,9 +4,13 @@ const path = require("path");
 const fs = require("fs");
 const XLSX = require("xlsx");
 
-const filePath = path.join(__dirname, "../data/products.xlsx");
+// Ensure /data directory exists
+const dataDir = path.join(__dirname, "../data");
+if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
 
-// Helper: load all products
+const filePath = path.join(dataDir, "products.xlsx");
+
+// Helper: Load products
 function loadProducts() {
   if (!fs.existsSync(filePath)) return [];
   const wb = XLSX.readFile(filePath);
@@ -14,7 +18,7 @@ function loadProducts() {
   return XLSX.utils.sheet_to_json(ws);
 }
 
-// Helper: save all products
+// Helper: Save products
 function saveProducts(data) {
   const ws = XLSX.utils.json_to_sheet(data);
   const wb = XLSX.utils.book_new();
@@ -24,41 +28,57 @@ function saveProducts(data) {
 
 // GET all products
 router.get("/", (req, res) => {
-  const data = loadProducts();
-  res.json(data);
+  try {
+    const data = loadProducts();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load products" });
+  }
 });
 
 // POST new product
 router.post("/", (req, res) => {
-  const products = loadProducts();
-  products.push(req.body);
-  saveProducts(products);
-  res.sendStatus(200);
+  try {
+    const products = loadProducts();
+    products.push(req.body);
+    saveProducts(products);
+    res.status(201).json({ message: "Product added" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to save product" });
+  }
 });
 
-// PUT (update) product at index
+// PUT update product at index
 router.put("/:index", (req, res) => {
-  const index = parseInt(req.params.index);
-  const products = loadProducts();
-  if (index >= 0 && index < products.length) {
-    products[index] = req.body;
-    saveProducts(products);
-    res.sendStatus(200);
-  } else {
-    res.status(404).send("Product not found");
+  try {
+    const index = parseInt(req.params.index);
+    const products = loadProducts();
+    if (index >= 0 && index < products.length) {
+      products[index] = req.body;
+      saveProducts(products);
+      res.json({ message: "Product updated" });
+    } else {
+      res.status(404).json({ error: "Product not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update product" });
   }
 });
 
 // DELETE product at index
 router.delete("/:index", (req, res) => {
-  const index = parseInt(req.params.index);
-  const products = loadProducts();
-  if (index >= 0 && index < products.length) {
-    products.splice(index, 1);
-    saveProducts(products);
-    res.sendStatus(200);
-  } else {
-    res.status(404).send("Product not found");
+  try {
+    const index = parseInt(req.params.index);
+    const products = loadProducts();
+    if (index >= 0 && index < products.length) {
+      products.splice(index, 1);
+      saveProducts(products);
+      res.json({ message: "Product deleted" });
+    } else {
+      res.status(404).json({ error: "Product not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete product" });
   }
 });
 
